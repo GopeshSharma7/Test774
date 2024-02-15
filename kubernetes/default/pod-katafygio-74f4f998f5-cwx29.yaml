@@ -125,11 +125,11 @@ status:
     status: "True"
     type: Initialized
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-15T20:00:33Z"
+    lastTransitionTime: "2024-02-15T20:06:53Z"
     status: "True"
     type: Ready
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-15T20:00:33Z"
+    lastTransitionTime: "2024-02-15T20:06:53Z"
     status: "True"
     type: ContainersReady
   - lastProbeTime: null
@@ -137,23 +137,23 @@ status:
     status: "True"
     type: PodScheduled
   containerStatuses:
-  - containerID: cri-o://81bd0cbc0c65e081ba49be0013e6df57db9d13ce05aaca4888a1f38944a927f9
+  - containerID: cri-o://78e5f3aac9496620d6e36cf7595aa1139000ce01cfa5c36784e0510ec0b133f0
     image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/katafygio-v3:CER-194
     imageID: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/katafygio-v3@sha256:bc704571caefbe45884e2fd6f3b5a2fcecdd1f0eff9a5701c2bf606d29447b7a
     lastState:
       terminated:
-        containerID: cri-o://e94db41b7206dabdeacc55d16290e273162470b2b5e002e359f36e2c16b2da3e
+        containerID: cri-o://81bd0cbc0c65e081ba49be0013e6df57db9d13ce05aaca4888a1f38944a927f9
         exitCode: 1
-        finishedAt: "2024-02-15T20:00:06Z"
+        finishedAt: "2024-02-15T20:06:00Z"
         reason: Error
-        startedAt: "2024-02-15T19:54:41Z"
+        startedAt: "2024-02-15T20:00:32Z"
     name: katafygio
     ready: true
-    restartCount: 87
+    restartCount: 88
     started: true
     state:
       running:
-        startedAt: "2024-02-15T20:00:32Z"
+        startedAt: "2024-02-15T20:06:52Z"
   hostIP: 10.87.76.24
   phase: Running
   podIP: 192.168.0.1
