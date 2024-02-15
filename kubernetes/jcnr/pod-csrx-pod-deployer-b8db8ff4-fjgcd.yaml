@@ -1,0 +1,311 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: b4615721d3f4979aee26eeab15895fbbb216db12b9cc82e6a9429d13543ce6d3
+    cni.projectcalico.org/podIP: 192.168.0.54/32
+    cni.projectcalico.org/podIPs: 192.168.0.54/32
+    jcnr.juniper.net/dpdk-interfaces: |-
+      [
+          {
+              "name": "eth1",
+              "vhost-adaptor-path": "/dpdk/vhost-eth1.sock",
+              "vhost-adaptor-mode": "client",
+              "ipv4-address": "181.1.1.1/30",
+              "mac-address": "aa:bb:cc:dd:01:24"
+          },
+          {
+              "name": "eth2",
+              "vhost-adaptor-path": "/dpdk/vhost-eth2.sock",
+              "vhost-adaptor-mode": "client",
+              "ipv4-address": "1.21.1.1/30",
+              "mac-address": "aa:bb:cc:dd:01:22"
+          }
+      ]
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "192.168.0.54"
+          ],
+          "default": true,
+          "dns": {}
+      },{
+          "name": "jcnr/net-untrust",
+          "interface": "eth1",
+          "ips": [
+              "181.1.1.1"
+          ],
+          "mac": "aa:bb:cc:dd:01:24",
+          "dns": {}
+      },{
+          "name": "jcnr/net-trust",
+          "interface": "eth2",
+          "ips": [
+              "1.21.1.1"
+          ],
+          "mac": "aa:bb:cc:dd:01:22",
+          "dns": {}
+      }]
+    k8s.v1.cni.cncf.io/networks: |
+      [
+        {
+          "name": "net-untrust",
+          "interface":"eth1",
+          "cni-args": {
+                "mac":"aa:bb:cc:dd:01:24",
+            "interfaceType":"vhost",
+            "dataplane":"dpdk",
+            "rd":"10:10",
+            "ipConfig":{
+              "ipv4":{
+                "address":"181.1.1.1/30",
+                "gateway":"181.1.1.2"
+              }
+            }
+          }
+        },
+        {
+          "name": "net-trust",
+          "interface":"eth2",
+          "cni-args": {
+          "advertiseRoutes": ["222.1.0.0/16"],
+         "mac":"aa:bb:cc:dd:01:22",
+            "interfaceType": "vhost",
+            "dataplane":"dpdk",
+            "rd":"11:11",
+            "ipConfig":{
+              "ipv4":{
+                "address":"1.21.1.1/30",
+                "gateway":"1.21.1.2"
+              }
+            }
+          }
+        }
+      ]
+    k8s.v1.cni.cncf.io/networks-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "192.168.0.54"
+          ],
+          "default": true,
+          "dns": {}
+      },{
+          "name": "jcnr/net-untrust",
+          "interface": "eth1",
+          "ips": [
+              "181.1.1.1"
+          ],
+          "mac": "aa:bb:cc:dd:01:24",
+          "dns": {}
+      },{
+          "name": "jcnr/net-trust",
+          "interface": "eth2",
+          "ips": [
+              "1.21.1.1"
+          ],
+          "mac": "aa:bb:cc:dd:01:22",
+          "dns": {}
+      }]
+  creationTimestamp: "2024-02-12T12:43:22Z"
+  generateName: csrx-pod-deployer-b8db8ff4-
+  labels:
+    app: csrx
+    pod-template-hash: b8db8ff4
+  name: csrx-pod-deployer-b8db8ff4-fjgcd
+  namespace: jcnr
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: csrx-pod-deployer-b8db8ff4
+    uid: bf8425d8-95d7-47e3-a056-83f6293a1363
+  uid: b97e7aba-bc58-452e-b24e-d137fe851106
+spec:
+  containers:
+  - env:
+    - name: CSRX_SIZE
+      value: large
+    - name: CSRX_HUGEPAGES
+      value: "yes"
+    - name: CSRX_PACKET_DRIVER
+      value: virtio
+    - name: KUBERNETES_POD_UID
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.uid
+    - name: CSRX_FORWARD_MODE
+      value: routing
+    - name: CSRX_AUTO_ASSIGN_IP
+      value: "yes"
+    - name: CSRX_MGMT_PORT_REORDER
+      value: "no"
+    - name: CSRX_TCP_CKSUM_CALC
+      value: "yes"
+    - name: CSRX_LICENSE_FILE
+      value: /var/jail/csrx_license
+    - name: CSRX_JUNOS_CONFIG
+      value: /var/jail/csrx_config
+    - name: CSRX_CTRL_CPU
+      value: "0x01"
+    - name: CSRX_DATA_CPU
+      value: "0x05"
+    image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/csrx:23.4R1.7
+    imagePullPolicy: Always
+    name: csrx
+    ports:
+    - containerPort: 22
+      protocol: TCP
+    resources:
+      limits:
+        hugepages-1Gi: 4Gi
+        memory: 4Gi
+      requests:
+        hugepages-1Gi: 4Gi
+        memory: 4Gi
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /dev
+      name: disk
+    - mountPath: /var/jail
+      name: config
+    - mountPath: /mnt/huge
+      name: hugepage
+    - mountPath: /dpdk
+      name: dpdk
+      subPathExpr: $(KUBERNETES_POD_UID)
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-gknr5
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  initContainers:
+  - command:
+    - ./csrx-init
+    image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/csrx-init:f4tgt33
+    imagePullPolicy: Always
+    name: csrx-init
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /config
+      name: csrx-tpl
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-gknr5
+      readOnly: true
+  nodeName: abhi-master-node
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: csrx
+  serviceAccountName: csrx
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - hostPath:
+      path: /mnt/huge
+      type: ""
+    name: hugepage
+  - hostPath:
+      path: /var/run/jcnr/containers
+      type: ""
+    name: dpdk
+  - hostPath:
+      path: /dev
+      type: Directory
+    name: disk
+  - configMap:
+      defaultMode: 420
+      name: csrx-config-map
+    name: config
+  - configMap:
+      defaultMode: 420
+      name: csrx-tpl
+    name: csrx-tpl
+  - name: kube-api-access-gknr5
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-12T12:43:26Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-15T09:43:14Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-15T09:43:14Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-12T12:43:22Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://a4158c63a1863274559de671cbb7bfca699b68045815059957e3643835aab93b
+    image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/csrx:23.4R1.7
+    imageID: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/csrx@sha256:3eddf5ff80e65e073b0540efbe9e713695126745e56a15549a88a04098928302
+    lastState: {}
+    name: csrx
+    ready: true
+    restartCount: 2
+    started: true
+    state:
+      running:
+        startedAt: "2024-02-15T09:43:13Z"
+  hostIP: 10.87.76.24
+  initContainerStatuses:
+  - containerID: cri-o://4086627dfe9deb711728254668bf207715b17efb680169d3e0365402d6f32ef7
+    image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/csrx-init:f4tgt33
+    imageID: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/csrx-init@sha256:8b78a02e48537c131642aeabe6e116da2eb318657445b7d2f6c8509f5259bb8a
+    lastState: {}
+    name: csrx-init
+    ready: true
+    restartCount: 1
+    state:
+      terminated:
+        containerID: cri-o://4086627dfe9deb711728254668bf207715b17efb680169d3e0365402d6f32ef7
+        exitCode: 0
+        finishedAt: "2024-02-15T09:43:13Z"
+        reason: Completed
+        startedAt: "2024-02-15T09:43:12Z"
+  phase: Running
+  podIP: 192.168.0.54
+  podIPs:
+  - ip: 192.168.0.54
+  qosClass: Burstable
+  startTime: "2024-02-12T12:43:22Z"

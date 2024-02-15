@@ -1,0 +1,433 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2024-02-01T16:13:21Z"
+  generateName: calico-node-
+  labels:
+    controller-revision-hash: 5b6695d489
+    k8s-app: calico-node
+    pod-template-generation: "1"
+  name: calico-node-wfhd9
+  namespace: kube-system
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: DaemonSet
+    name: calico-node
+    uid: a72d8497-64e3-4240-a9cf-349930640439
+  uid: 82edfea9-7f74-4cb1-b470-fb20a101e5ba
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchFields:
+          - key: metadata.name
+            operator: In
+            values:
+            - abhi-master-node
+  containers:
+  - env:
+    - name: DATASTORE_TYPE
+      value: kubernetes
+    - name: WAIT_FOR_DATASTORE
+      value: "true"
+    - name: NODENAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.nodeName
+    - name: CALICO_NETWORKING_BACKEND
+      valueFrom:
+        configMapKeyRef:
+          key: calico_backend
+          name: calico-config
+    - name: CLUSTER_TYPE
+      value: k8s,bgp
+    - name: IP
+      value: autodetect
+    - name: CALICO_IPV4POOL_IPIP
+      value: Always
+    - name: CALICO_IPV4POOL_VXLAN
+      value: Never
+    - name: CALICO_IPV6POOL_VXLAN
+      value: Never
+    - name: FELIX_IPINIPMTU
+      valueFrom:
+        configMapKeyRef:
+          key: veth_mtu
+          name: calico-config
+    - name: FELIX_VXLANMTU
+      valueFrom:
+        configMapKeyRef:
+          key: veth_mtu
+          name: calico-config
+    - name: FELIX_WIREGUARDMTU
+      valueFrom:
+        configMapKeyRef:
+          key: veth_mtu
+          name: calico-config
+    - name: CALICO_DISABLE_FILE_LOGGING
+      value: "true"
+    - name: FELIX_DEFAULTENDPOINTTOHOSTACTION
+      value: ACCEPT
+    - name: FELIX_IPV6SUPPORT
+      value: "false"
+    - name: FELIX_HEALTHENABLED
+      value: "true"
+    envFrom:
+    - configMapRef:
+        name: kubernetes-services-endpoint
+        optional: true
+    image: svl-artifactory.juniper.net/atom_virtual_docker/calico/node:v3.26.1
+    imagePullPolicy: IfNotPresent
+    lifecycle:
+      preStop:
+        exec:
+          command:
+          - /bin/calico-node
+          - -shutdown
+    livenessProbe:
+      exec:
+        command:
+        - /bin/calico-node
+        - -felix-live
+        - -bird-live
+      failureThreshold: 6
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 10
+    name: calico-node
+    readinessProbe:
+      exec:
+        command:
+        - /bin/calico-node
+        - -felix-ready
+        - -bird-ready
+      failureThreshold: 3
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 10
+    resources:
+      requests:
+        cpu: 250m
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /host/etc/cni/net.d
+      name: cni-net-dir
+    - mountPath: /lib/modules
+      name: lib-modules
+      readOnly: true
+    - mountPath: /run/xtables.lock
+      name: xtables-lock
+    - mountPath: /var/run/calico
+      name: var-run-calico
+    - mountPath: /var/lib/calico
+      name: var-lib-calico
+    - mountPath: /var/run/nodeagent
+      name: policysync
+    - mountPath: /sys/fs/bpf
+      name: bpffs
+    - mountPath: /var/log/calico/cni
+      name: cni-log-dir
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-4784t
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostNetwork: true
+  initContainers:
+  - command:
+    - /opt/cni/bin/calico-ipam
+    - -upgrade
+    env:
+    - name: KUBERNETES_NODE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.nodeName
+    - name: CALICO_NETWORKING_BACKEND
+      valueFrom:
+        configMapKeyRef:
+          key: calico_backend
+          name: calico-config
+    envFrom:
+    - configMapRef:
+        name: kubernetes-services-endpoint
+        optional: true
+    image: svl-artifactory.juniper.net/atom_virtual_docker/calico/cni:v3.26.1
+    imagePullPolicy: IfNotPresent
+    name: upgrade-ipam
+    resources: {}
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/lib/cni/networks
+      name: host-local-net-dir
+    - mountPath: /host/opt/cni/bin
+      name: cni-bin-dir
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-4784t
+      readOnly: true
+  - command:
+    - /opt/cni/bin/install
+    env:
+    - name: CNI_CONF_NAME
+      value: 10-calico.conflist
+    - name: CNI_NETWORK_CONFIG
+      valueFrom:
+        configMapKeyRef:
+          key: cni_network_config
+          name: calico-config
+    - name: KUBERNETES_NODE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.nodeName
+    - name: CNI_MTU
+      valueFrom:
+        configMapKeyRef:
+          key: veth_mtu
+          name: calico-config
+    - name: SLEEP
+      value: "false"
+    envFrom:
+    - configMapRef:
+        name: kubernetes-services-endpoint
+        optional: true
+    image: svl-artifactory.juniper.net/atom_virtual_docker/calico/cni:v3.26.1
+    imagePullPolicy: IfNotPresent
+    name: install-cni
+    resources: {}
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /host/opt/cni/bin
+      name: cni-bin-dir
+    - mountPath: /host/etc/cni/net.d
+      name: cni-net-dir
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-4784t
+      readOnly: true
+  - command:
+    - calico-node
+    - -init
+    - -best-effort
+    image: svl-artifactory.juniper.net/atom_virtual_docker/calico/node:v3.26.1
+    imagePullPolicy: IfNotPresent
+    name: mount-bpffs
+    resources: {}
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /sys/fs
+      mountPropagation: Bidirectional
+      name: sys-fs
+    - mountPath: /var/run/calico
+      mountPropagation: Bidirectional
+      name: var-run-calico
+    - mountPath: /nodeproc
+      name: nodeproc
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-4784t
+      readOnly: true
+  nodeName: abhi-master-node
+  nodeSelector:
+    kubernetes.io/os: linux
+  preemptionPolicy: PreemptLowerPriority
+  priority: 2000001000
+  priorityClassName: system-node-critical
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: calico-node
+  serviceAccountName: calico-node
+  terminationGracePeriodSeconds: 0
+  tolerations:
+  - effect: NoSchedule
+    operator: Exists
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - effect: NoExecute
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/disk-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/memory-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/pid-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/unschedulable
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/network-unavailable
+    operator: Exists
+  volumes:
+  - hostPath:
+      path: /lib/modules
+      type: ""
+    name: lib-modules
+  - hostPath:
+      path: /var/run/calico
+      type: ""
+    name: var-run-calico
+  - hostPath:
+      path: /var/lib/calico
+      type: ""
+    name: var-lib-calico
+  - hostPath:
+      path: /run/xtables.lock
+      type: FileOrCreate
+    name: xtables-lock
+  - hostPath:
+      path: /sys/fs/
+      type: DirectoryOrCreate
+    name: sys-fs
+  - hostPath:
+      path: /sys/fs/bpf
+      type: Directory
+    name: bpffs
+  - hostPath:
+      path: /proc
+      type: ""
+    name: nodeproc
+  - hostPath:
+      path: /opt/cni/bin
+      type: ""
+    name: cni-bin-dir
+  - hostPath:
+      path: /etc/cni/net.d
+      type: ""
+    name: cni-net-dir
+  - hostPath:
+      path: /var/log/calico/cni
+      type: ""
+    name: cni-log-dir
+  - hostPath:
+      path: /var/lib/cni/networks
+      type: ""
+    name: host-local-net-dir
+  - hostPath:
+      path: /var/run/nodeagent
+      type: DirectoryOrCreate
+    name: policysync
+  - name: kube-api-access-4784t
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-15T09:41:52Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-15T09:42:00Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-15T09:42:00Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-01T16:13:21Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://e724665772b2a0f6b59728937736bc54a7a8bdf66de671d3b695ebe1b1718172
+    image: svl-artifactory.juniper.net/atom_virtual_docker/calico/node:v3.26.1
+    imageID: svl-artifactory.juniper.net/atom_virtual_docker/calico/node@sha256:8e34517775f319917a0be516ed3a373dbfca650d1ee8e72158087c24356f47fb
+    lastState: {}
+    name: calico-node
+    ready: true
+    restartCount: 3
+    started: true
+    state:
+      running:
+        startedAt: "2024-02-15T09:41:54Z"
+  hostIP: 10.87.76.24
+  initContainerStatuses:
+  - containerID: cri-o://016962eb8a273375cf6141c2c76071777c5b6829316bfface4cb11372ced6a0c
+    image: svl-artifactory.juniper.net/atom_virtual_docker/calico/cni:v3.26.1
+    imageID: svl-artifactory.juniper.net/atom_virtual_docker/calico/cni@sha256:3be3c67ddba17004c292eafec98cc49368ac273b40b27c8a6621be4471d348d6
+    lastState: {}
+    name: upgrade-ipam
+    ready: true
+    restartCount: 3
+    state:
+      terminated:
+        containerID: cri-o://016962eb8a273375cf6141c2c76071777c5b6829316bfface4cb11372ced6a0c
+        exitCode: 0
+        finishedAt: "2024-02-15T09:41:49Z"
+        reason: Completed
+        startedAt: "2024-02-15T09:41:48Z"
+  - containerID: cri-o://073f195b3817e68c9252a4844b23c4c7801b5f2e6dda8c6e71744ce7d2f2fec6
+    image: svl-artifactory.juniper.net/atom_virtual_docker/calico/cni:v3.26.1
+    imageID: svl-artifactory.juniper.net/atom_virtual_docker/calico/cni@sha256:3be3c67ddba17004c292eafec98cc49368ac273b40b27c8a6621be4471d348d6
+    lastState: {}
+    name: install-cni
+    ready: true
+    restartCount: 3
+    state:
+      terminated:
+        containerID: cri-o://073f195b3817e68c9252a4844b23c4c7801b5f2e6dda8c6e71744ce7d2f2fec6
+        exitCode: 0
+        finishedAt: "2024-02-15T09:41:52Z"
+        reason: Completed
+        startedAt: "2024-02-15T09:41:49Z"
+  - containerID: cri-o://f17218c313b306e9c874e03e102c3a5ddae2065dfb4370cfed63f3e90e3774ef
+    image: svl-artifactory.juniper.net/atom_virtual_docker/calico/node:v3.26.1
+    imageID: svl-artifactory.juniper.net/atom_virtual_docker/calico/node@sha256:8e34517775f319917a0be516ed3a373dbfca650d1ee8e72158087c24356f47fb
+    lastState: {}
+    name: mount-bpffs
+    ready: true
+    restartCount: 3
+    state:
+      terminated:
+        containerID: cri-o://f17218c313b306e9c874e03e102c3a5ddae2065dfb4370cfed63f3e90e3774ef
+        exitCode: 0
+        finishedAt: "2024-02-15T09:41:53Z"
+        reason: Completed
+        startedAt: "2024-02-15T09:41:52Z"
+  phase: Running
+  podIP: 10.87.76.24
+  podIPs:
+  - ip: 10.87.76.24
+  qosClass: Burstable
+  startTime: "2024-02-01T16:13:21Z"

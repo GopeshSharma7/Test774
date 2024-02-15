@@ -1,0 +1,164 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2024-02-12T11:55:53Z"
+  generateName: contrail-k8s-deployer-79c8699bbc-
+  labels:
+    app: contrail-k8s-deployer
+    pod-template-hash: 79c8699bbc
+  name: contrail-k8s-deployer-79c8699bbc-tf8s4
+  namespace: contrail-deploy
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: contrail-k8s-deployer-79c8699bbc
+    uid: 84fb0302-edc6-4bd7-852e-1e1ff5230b7d
+  uid: 4a74c001-a25c-4f5a-b84f-fbc55eb27a0e
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/os
+            operator: In
+            values:
+            - linux
+  containers:
+  - command:
+    - sh
+    - -c
+    - /manager --metrics-addr 127.0.0.1:8081 --headless-mode true
+    image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/x86_64/contrail-k8s-deployer:R23.4-95
+    imagePullPolicy: IfNotPresent
+    name: contrail-k8s-deployer
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /etc/localtime
+      name: host-time
+    - mountPath: /tmp/k8s-webhook-server/serving-certs
+      name: cert
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-vf5xr
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostNetwork: true
+  initContainers:
+  - command:
+    - kubectl
+    - apply
+    - --server-side=true
+    - --force-conflicts
+    - -k
+    - /distributed-crd
+    image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/x86_64/contrail-k8s-distributed-crdloader:R23.4-95
+    imagePullPolicy: IfNotPresent
+    name: contrail-k8s-crdloader
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /etc/localtime
+      name: host-time
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-vf5xr
+      readOnly: true
+  nodeName: abhi-master-node
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: contrail-deploy-serviceaccount
+  serviceAccountName: contrail-deploy-serviceaccount
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoSchedule
+    operator: Exists
+  - effect: NoExecute
+    operator: Exists
+  volumes:
+  - hostPath:
+      path: /etc/localtime
+      type: ""
+    name: host-time
+  - name: cert
+    secret:
+      defaultMode: 420
+      secretName: webhook-server-cert
+  - name: kube-api-access-vf5xr
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-15T09:42:26Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-15T09:42:27Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-15T09:42:27Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-12T11:55:53Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://f8997bd120fe32dbfcd1901171019da563c40c5d37f91d40d77f6d71d84a137c
+    image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/x86_64/contrail-k8s-deployer:R23.4-95
+    imageID: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/x86_64/contrail-k8s-deployer@sha256:0805ec0f6a202949d3a457bdc6823c691f37bef75788136da88a215cd842b036
+    lastState: {}
+    name: contrail-k8s-deployer
+    ready: true
+    restartCount: 1
+    started: true
+    state:
+      running:
+        startedAt: "2024-02-15T09:42:26Z"
+  hostIP: 10.87.76.24
+  initContainerStatuses:
+  - containerID: cri-o://6acbbfd1ef83c550fabe393f968b5842e52d3063dd1ce11b2b54508b94b39bc2
+    image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/x86_64/contrail-k8s-distributed-crdloader:R23.4-95
+    imageID: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/dev/x86_64/contrail-k8s-distributed-crdloader@sha256:aa66ed51e7a1d9886cb7e77ee5879f0b771c702a28b1ba66af89d41b19f91802
+    lastState: {}
+    name: contrail-k8s-crdloader
+    ready: true
+    restartCount: 2
+    state:
+      terminated:
+        containerID: cri-o://6acbbfd1ef83c550fabe393f968b5842e52d3063dd1ce11b2b54508b94b39bc2
+        exitCode: 0
+        finishedAt: "2024-02-15T09:42:25Z"
+        reason: Completed
+        startedAt: "2024-02-15T09:42:21Z"
+  phase: Running
+  podIP: 10.87.76.24
+  podIPs:
+  - ip: 10.87.76.24
+  qosClass: BestEffort
+  startTime: "2024-02-12T11:55:53Z"
