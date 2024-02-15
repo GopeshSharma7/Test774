@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"nginx"},"name":"nginx-service-test","namespace":"default"},"spec":{"ports":[{"name":"http","port":900,"protocol":"TCP","targetPort":30}],"selector":{"app":"nginx"}}}
+  creationTimestamp: "2024-01-31T09:14:00Z"
+  labels:
+    app: nginx
+  name: nginx-service-test
+  namespace: default
+  uid: af1404be-4669-4db8-852e-c922174a2fa4
+spec:
+  clusterIP: 10.10.10.118
+  clusterIPs:
+  - 10.10.10.118
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 900
+    protocol: TCP
+    targetPort: 30
+  selector:
+    app: nginx
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

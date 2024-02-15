@@ -1,0 +1,146 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 5607f9ed612cc8c5197fc81f049a6054aee3d46caeee0e140b87b13589f97fb3
+    cni.projectcalico.org/podIP: 10.244.35.152/32
+    cni.projectcalico.org/podIPs: 10.244.35.152/32
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "10.244.35.152"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    k8s.v1.cni.cncf.io/networks-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "10.244.35.152"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+  creationTimestamp: "2024-01-19T18:50:14Z"
+  generateName: example-webhook-759d9786bf-
+  labels:
+    app: example-webhook
+    pod-template-hash: 759d9786bf
+  name: example-webhook-759d9786bf-824tf
+  namespace: default
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: example-webhook-759d9786bf
+    uid: d90701f2-0da3-40d0-8c5d-8a85f2a8b408
+  uid: 7c55a636-9bd9-4652-9af8-65dcc95dbb5a
+spec:
+  containers:
+  - image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/mutate-webhook:CER-183
+    imagePullPolicy: IfNotPresent
+    name: server
+    ports:
+    - containerPort: 8443
+      name: tls
+      protocol: TCP
+    - containerPort: 80
+      name: metrics
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /etc/webhook/certs/
+      name: webhook-tls-certs
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-mz8q4
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+  nodeSelector:
+    kubernetes.io/os: linux
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1234
+  serviceAccount: example-webhook
+  serviceAccountName: example-webhook
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: webhook-tls-certs
+    secret:
+      defaultMode: 420
+      secretName: example-webhook-tls
+  - name: kube-api-access-mz8q4
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-19T18:50:14Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-19T18:50:16Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-19T18:50:16Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-19T18:50:14Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://4308039a43d4b39e7702e606009f6a05cf1e742db1e84caffd18603fee0226e7
+    image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/mutate-webhook:CER-183
+    imageID: 4fdfb2ab8cfd73d2e34234dd5de0b9214ffbceb523e8c026a1995f73b7a003c9
+    lastState: {}
+    name: server
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2024-01-19T18:50:15Z"
+  hostIP: 192.168.1.3
+  phase: Running
+  podIP: 10.244.35.152
+  podIPs:
+  - ip: 10.244.35.152
+  qosClass: BestEffort
+  startTime: "2024-01-19T18:50:14Z"

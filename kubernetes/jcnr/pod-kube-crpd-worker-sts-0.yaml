@@ -1,0 +1,427 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2023-12-27T09:47:47Z"
+  generateName: kube-crpd-worker-sts-
+  labels:
+    apps.kubernetes.io/pod-index: "0"
+    controller-revision-hash: kube-crpd-worker-sts-85c4564ff4
+    k8s-app: kube-crpd-worker
+    statefulset.kubernetes.io/pod-name: kube-crpd-worker-sts-0
+  name: kube-crpd-worker-sts-0
+  namespace: jcnr
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: StatefulSet
+    name: kube-crpd-worker-sts
+    uid: f046b808-435e-4945-96ca-975a05920ac5
+  uid: c23f0f12-0cda-45e7-8c9d-8b877547e7dc
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/os
+            operator: In
+            values:
+            - linux
+          - key: kubernetes.io/arch
+            operator: In
+            values:
+            - amd64
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: k8s-app
+            operator: In
+            values:
+            - kube-crpd-worker
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - args:
+    - /config/scripts/jcnr-pre-init.sh && exec /sbin/runit-init.sh
+    command:
+    - /bin/sh
+    - -c
+    env:
+    - name: NODE_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.hostIP
+    - name: CRPD_PERSONALITY
+      value: jcnr
+    - name: IS_MASTER
+      value: "False"
+    - name: SYSLOG_REMOTE_DEST
+      value: '@127.0.0.1:50055'
+    - name: VROUTER_GRPC_PORT
+    image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/crpd:23.4R1.7
+    imagePullPolicy: IfNotPresent
+    lifecycle:
+      postStart:
+        exec:
+          command:
+          - /bin/sh
+          - -c
+          - /config/scripts/jcnr-post-init.sh
+    livenessProbe:
+      exec:
+        command:
+        - /config/scripts/health-check.sh
+        - --liveness
+        - --vrouter
+      failureThreshold: 3
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    name: kube-crpd-worker
+    resources: {}
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_ADMIN
+      privileged: true
+    startupProbe:
+      exec:
+        command:
+        - /config/scripts/health-check.sh
+        - --startup
+        - --vrouter
+      failureThreshold: 3
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /config
+      name: conf
+    - mountPath: /host
+      name: cni
+    - mountPath: /etc/secrets
+      name: secrets
+    - mountPath: /var/run
+      name: var-run
+    - mountPath: /var/log
+      name: var-log
+    - mountPath: /etc/localtime
+      name: host-time
+    - mountPath: /var/crash
+      name: crash
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-m7bhs
+      readOnly: true
+  - command:
+    - /telemetry-exporter
+    - run
+    - -c
+    - /etc/telemetry-exporter/config/config-crpd.yaml,/etc/telemetry-exporter/config-overlay/config-crpd.yaml
+    env:
+    - name: HOSTNAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.nodeName
+    - name: TYPE
+      value: crpd
+    - name: NAMESPACE
+      value: jcnr
+    image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-telemetry-exporter:master
+    imagePullPolicy: IfNotPresent
+    name: jcnr-crpd-telemetry-exporter
+    ports:
+    - containerPort: 8072
+      hostPort: 8072
+      name: metrics
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /testing
+      name: telemetry-exporter-overrides
+    - mountPath: /etc/telemetry-exporter/config-overlay
+      name: crpd-telemetry-exporter-config
+    - mountPath: /etc/secrets
+      name: secrets
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-m7bhs
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostNetwork: true
+  hostname: kube-crpd-worker-sts-0
+  initContainers:
+  - args:
+    - -c
+    - python3 -u crpdconfig_generator/crpdconfig_generator.py
+    command:
+    - /bin/sh
+    env:
+    - name: NODE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.nodeName
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/crpdconfig-generator:v21
+    imagePullPolicy: IfNotPresent
+    name: jcnr-crpd-config
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /opt/jcnr-config
+      name: jcnr-config
+    - mountPath: /opt/jcnr-custom-config
+      name: jcnr-custom-config
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-m7bhs
+      readOnly: true
+  - env:
+    - name: NODE_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.hostIP
+    - name: CRPD_PERSONALITY
+      value: jcnr
+    - name: CRPD_CONFIG_DIR
+      value: /config
+    - name: IS_MASTER
+      value: "False"
+    - name: CRPD_CONFIG_TEMPLATE
+      value: /etc/jcnr/crpdconfig
+    - name: PRIMARY_CNI
+      value: "False"
+    - name: BGP_CONNECT_PORT
+      value: "179"
+    - name: BGP_LISTEN_PORT
+      value: "178"
+    - name: SRGB_START_LABEL
+      value: "400000"
+    - name: SRGB_INDEX_RANGE
+      value: "4000"
+    - name: SYSLOG_REMOTE_DEST
+      value: '@127.0.0.1:50055'
+    - name: CNI_LOG_FILE_SIZE
+      value: "1"
+    - name: CNI_LOG_FILE_COUNT
+      value: "10"
+    - name: CORE_PATTERN
+    - name: CNI_LOG_PATH
+      value: /var/log/jcnr/
+    - name: CNI_LOG_LEVEL
+      value: info
+    image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/jcnr-cni:master-20231221-e0f6d72
+    imagePullPolicy: IfNotPresent
+    name: install-cni
+    resources: {}
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - NET_RAW
+        - SYS_ADMIN
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /config
+      name: conf
+    - mountPath: /host
+      name: cni
+    - mountPath: /etc/jcnr
+      name: jcnr-config-generated
+    - mountPath: /etc/jcnr-params
+      name: jcnr-params
+    - mountPath: /etc/secrets
+      name: secrets
+    - mountPath: /var/run
+      name: var-run
+    - mountPath: /etc/localtime
+      name: host-time
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-m7bhs
+      readOnly: true
+  nodeName: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: crpd
+  serviceAccountName: crpd
+  subdomain: jcnr
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoSchedule
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: conf
+    persistentVolumeClaim:
+      claimName: conf-kube-crpd-worker-sts-0
+  - hostPath:
+      path: /
+      type: ""
+    name: cni
+  - configMap:
+      defaultMode: 420
+      name: jcnr-config
+    name: jcnr-config
+  - configMap:
+      defaultMode: 420
+      name: jcnr-custom-config
+    name: jcnr-custom-config
+  - configMap:
+      defaultMode: 420
+      name: jcnr-config-generated
+    name: jcnr-config-generated
+  - configMap:
+      defaultMode: 420
+      name: jcnr-params
+      optional: true
+    name: jcnr-params
+  - name: secrets
+    secret:
+      defaultMode: 420
+      secretName: jcnr-secrets
+  - hostPath:
+      path: /var/run/crpd/
+      type: ""
+    name: var-run
+  - hostPath:
+      path: /var/log/jcnr/
+      type: ""
+    name: var-log
+  - hostPath:
+      path: /etc/localtime
+      type: ""
+    name: host-time
+  - hostPath:
+      path: /var/crash
+      type: ""
+    name: crash
+  - configMap:
+      defaultMode: 420
+      name: crpd-telemetry-exporter-config
+    name: crpd-telemetry-exporter-config
+  - configMap:
+      defaultMode: 420
+      name: telemetry-exporter-overrides-configmap
+      optional: true
+    name: telemetry-exporter-overrides
+  - name: kube-api-access-m7bhs
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2023-12-27T09:48:01Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2023-12-27T09:48:38Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2023-12-27T09:48:38Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2023-12-27T09:47:48Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://edab8e3070ee4c3515848edac375d089aa9b55582e592b22d07e165abbc601e2
+    image: 10.108.30.10:5000/atom-docker/cn2/bazel-build/dev/x86_64/contrail-telemetry-exporter:master
+    imageID: 74442f1336697f386f1f32c0f2fe3859643fd397cf29919b151ee74c269a2a4c
+    lastState: {}
+    name: jcnr-crpd-telemetry-exporter
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2023-12-27T09:48:24Z"
+  - containerID: cri-o://a51b6336734bc40bb82556b4af577fc8dee51c62ddcb82e564582f625832f491
+    image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/crpd:23.4R1.7
+    imageID: 8575b4f0beaa467c801ff9eaa080ad3d4a286952dbc0de1dde7336dddb19da11
+    lastState: {}
+    name: kube-crpd-worker
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2023-12-27T09:48:13Z"
+  hostIP: 192.168.1.3
+  initContainerStatuses:
+  - containerID: cri-o://01f53ef1a01fc52634a411e998522590c72a100f0afe14d0f3272f5a289d8f94
+    image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/crpdconfig-generator:v21
+    imageID: b0804dda66d833cb2e4b2847807b0ccb1ec1f87c467c20e9779bbc3f088c493b
+    lastState: {}
+    name: jcnr-crpd-config
+    ready: true
+    restartCount: 0
+    started: false
+    state:
+      terminated:
+        containerID: cri-o://01f53ef1a01fc52634a411e998522590c72a100f0afe14d0f3272f5a289d8f94
+        exitCode: 0
+        finishedAt: "2023-12-27T09:47:58Z"
+        reason: Completed
+        startedAt: "2023-12-27T09:47:53Z"
+  - containerID: cri-o://efa16c63ec758a4416ee33ed14eb18525952b8d22e735b8c13c22052509ce5d5
+    image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/jcnr-cni:master-20231221-e0f6d72
+    imageID: 715d8f3ab1e31e1c34e67f3bbf1875dffa44c13c0c3d2edcedc0781850fee4be
+    lastState: {}
+    name: install-cni
+    ready: true
+    restartCount: 0
+    started: false
+    state:
+      terminated:
+        containerID: cri-o://efa16c63ec758a4416ee33ed14eb18525952b8d22e735b8c13c22052509ce5d5
+        exitCode: 0
+        finishedAt: "2023-12-27T09:48:01Z"
+        reason: Completed
+        startedAt: "2023-12-27T09:48:00Z"
+  phase: Running
+  podIP: 192.168.1.3
+  podIPs:
+  - ip: 192.168.1.3
+  qosClass: BestEffort
+  startTime: "2023-12-27T09:47:48Z"

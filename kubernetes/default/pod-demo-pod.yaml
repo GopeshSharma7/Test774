@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 2ef382e0c44069fdfed4b6de7b8a3282dd4859c5e71c3802de47d8cfe884e7cd
+    cni.projectcalico.org/podIP: 10.244.35.156/32
+    cni.projectcalico.org/podIPs: 10.244.35.156/32
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "10.244.35.156"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    k8s.v1.cni.cncf.io/networks-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "10.244.35.156"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"demo-pod","namespace":"default"},"spec":{"containers":[{"image":"svl-artifactory.juniper.net/atom-docker/cn2/trohit7/gitea/gitea:1.21.4-rootless","name":"mutating"}]}}
+  creationTimestamp: "2024-01-31T09:09:41Z"
+  name: demo-pod
+  namespace: default
+  uid: e4f8fb3c-4532-4f33-9a54-f072ac9baf55
+spec:
+  containers:
+  - image: svl-artifactory.juniper.net/atom-docker/cn2/trohit7/gitea/gitea:1.21.4-rootless
+    imagePullPolicy: IfNotPresent
+    name: mutating
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-nt6fw
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: sharmag-k8s-dpdk-kubelet1-pnad30.englab.juniper.net
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-nt6fw
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-31T09:09:41Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-31T09:09:43Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-31T09:09:43Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-31T09:09:41Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://69f9a63e03850d38438ce45f40616d475ca644a74fa214e419520e47db934d98
+    image: svl-artifactory.juniper.net/atom-docker/cn2/trohit7/gitea/gitea:1.21.4-rootless
+    imageID: b54bb0997f8c4c7a1bfc57640afe1b0c79065097e1e92889babcfaa6c18d6ae6
+    lastState: {}
+    name: mutating
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2024-01-31T09:09:42Z"
+  hostIP: 192.168.1.3
+  phase: Running
+  podIP: 10.244.35.156
+  podIPs:
+  - ip: 10.244.35.156
+  qosClass: BestEffort
+  startTime: "2024-01-31T09:09:41Z"

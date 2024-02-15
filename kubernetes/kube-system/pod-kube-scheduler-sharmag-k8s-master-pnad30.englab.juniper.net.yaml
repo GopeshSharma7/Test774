@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubernetes.io/config.hash: e73677b083c54ad68a9dea8475379929
+    kubernetes.io/config.mirror: e73677b083c54ad68a9dea8475379929
+    kubernetes.io/config.seen: "2023-12-27T09:42:43.950619242Z"
+    kubernetes.io/config.source: file
+  creationTimestamp: "2023-12-27T09:42:49Z"
+  labels:
+    component: kube-scheduler
+    tier: control-plane
+  name: kube-scheduler-sharmag-k8s-master-pnad30.englab.juniper.net
+  namespace: kube-system
+  ownerReferences:
+  - apiVersion: v1
+    controller: true
+    kind: Node
+    name: sharmag-k8s-master-pnad30.englab.juniper.net
+    uid: 5fa103b5-b7c3-42b7-9c5e-c499875d6f5f
+  uid: 27d58d87-bd24-4399-acd8-ce6ca1d1d1ba
+spec:
+  containers:
+  - command:
+    - kube-scheduler
+    - --authentication-kubeconfig=/etc/kubernetes/scheduler.conf
+    - --authorization-kubeconfig=/etc/kubernetes/scheduler.conf
+    - --bind-address=127.0.0.1
+    - --kubeconfig=/etc/kubernetes/scheduler.conf
+    - --leader-elect=true
+    image: registry.englab.juniper.net/jfrog-repo/hosted_docker_images/kube-scheduler:v1.28.2
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      failureThreshold: 8
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: 10259
+        scheme: HTTPS
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 15
+    name: kube-scheduler
+    resources:
+      requests:
+        cpu: 100m
+    startupProbe:
+      failureThreshold: 24
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: 10259
+        scheme: HTTPS
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 15
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /etc/kubernetes/scheduler.conf
+      name: kubeconfig
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostNetwork: true
+  nodeName: sharmag-k8s-master-pnad30.englab.juniper.net
+  preemptionPolicy: PreemptLowerPriority
+  priority: 2000001000
+  priorityClassName: system-node-critical
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    operator: Exists
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/scheduler.conf
+      type: FileOrCreate
+    name: kubeconfig
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-06T12:09:46Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-11T03:05:33Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-11T03:05:33Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-06T12:09:46Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://3efcc75fffd38515b1e9c3ba03655aa34f1f59d2161b253eb7a31b9417f9d91e
+    image: registry.englab.juniper.net/jfrog-repo/hosted_docker_images/kube-scheduler:v1.28.2
+    imageID: 7a5d9d67a13f6ae031989bc2969ec55b06437725f397e6eb75b1dccac465a7b8
+    lastState:
+      terminated:
+        containerID: cri-o://5ed4af1a6aaf0b615fd41b8b1a724065e958135b7da9b888df304823b3bbf97e
+        exitCode: 1
+        finishedAt: "2024-02-11T03:05:13Z"
+        reason: Error
+        startedAt: "2024-02-10T22:38:25Z"
+    name: kube-scheduler
+    ready: true
+    restartCount: 10
+    started: true
+    state:
+      running:
+        startedAt: "2024-02-11T03:05:15Z"
+  hostIP: 192.168.1.2
+  phase: Running
+  podIP: 192.168.1.2
+  podIPs:
+  - ip: 192.168.1.2
+  qosClass: Burstable
+  startTime: "2024-02-06T12:09:46Z"

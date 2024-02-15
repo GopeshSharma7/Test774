@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubeadm.kubernetes.io/etcd.advertise-client-urls: https://192.168.1.2:2379
+    kubernetes.io/config.hash: 909c78e7f87de5a207e84855c749fc7c
+    kubernetes.io/config.mirror: 909c78e7f87de5a207e84855c749fc7c
+    kubernetes.io/config.seen: "2023-12-27T09:42:49.327297783Z"
+    kubernetes.io/config.source: file
+  creationTimestamp: "2023-12-27T09:42:49Z"
+  labels:
+    component: etcd
+    tier: control-plane
+  name: etcd-sharmag-k8s-master-pnad30.englab.juniper.net
+  namespace: kube-system
+  ownerReferences:
+  - apiVersion: v1
+    controller: true
+    kind: Node
+    name: sharmag-k8s-master-pnad30.englab.juniper.net
+    uid: 5fa103b5-b7c3-42b7-9c5e-c499875d6f5f
+  uid: e5ea2f7a-d278-450a-b8ed-e3c73149d762
+spec:
+  containers:
+  - command:
+    - etcd
+    - --advertise-client-urls=https://192.168.1.2:2379
+    - --cert-file=/etc/kubernetes/pki/etcd/server.crt
+    - --client-cert-auth=true
+    - --data-dir=/var/lib/etcd
+    - --experimental-initial-corrupt-check=true
+    - --experimental-watch-progress-notify-interval=5s
+    - --initial-advertise-peer-urls=https://192.168.1.2:2380
+    - --initial-cluster=sharmag-k8s-master-pnad30.englab.juniper.net=https://192.168.1.2:2380
+    - --key-file=/etc/kubernetes/pki/etcd/server.key
+    - --listen-client-urls=https://127.0.0.1:2379,https://192.168.1.2:2379
+    - --listen-metrics-urls=http://127.0.0.1:2381
+    - --listen-peer-urls=https://192.168.1.2:2380
+    - --name=sharmag-k8s-master-pnad30.englab.juniper.net
+    - --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt
+    - --peer-client-cert-auth=true
+    - --peer-key-file=/etc/kubernetes/pki/etcd/peer.key
+    - --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+    - --snapshot-count=10000
+    - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+    image: registry.englab.juniper.net/jfrog-repo/hosted_docker_images/etcd:3.5.9-0
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      failureThreshold: 8
+      httpGet:
+        host: 127.0.0.1
+        path: /health?exclude=NOSPACE&serializable=true
+        port: 2381
+        scheme: HTTP
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 15
+    name: etcd
+    resources:
+      requests:
+        cpu: 100m
+        memory: 100Mi
+    startupProbe:
+      failureThreshold: 24
+      httpGet:
+        host: 127.0.0.1
+        path: /health?serializable=false
+        port: 2381
+        scheme: HTTP
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 15
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/lib/etcd
+      name: etcd-data
+    - mountPath: /etc/kubernetes/pki/etcd
+      name: etcd-certs
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostNetwork: true
+  nodeName: sharmag-k8s-master-pnad30.englab.juniper.net
+  preemptionPolicy: PreemptLowerPriority
+  priority: 2000001000
+  priorityClassName: system-node-critical
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    operator: Exists
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/pki/etcd
+      type: DirectoryOrCreate
+    name: etcd-certs
+  - hostPath:
+      path: /var/lib/etcd
+      type: DirectoryOrCreate
+    name: etcd-data
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-06T12:09:46Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-06T12:10:05Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-06T12:10:05Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-02-06T12:09:46Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://f5a18a28dd40b76c0b2554394d8ddc4073a515c7ddd751c14adfe1ab67ef922d
+    image: registry.englab.juniper.net/jfrog-repo/hosted_docker_images/etcd:3.5.9-0
+    imageID: 73deb9a3f702532592a4167455f8bf2e5f5d900bcc959ba2fd2d35c321de1af9
+    lastState: {}
+    name: etcd
+    ready: true
+    restartCount: 1
+    started: true
+    state:
+      running:
+        startedAt: "2024-02-06T12:09:47Z"
+  hostIP: 192.168.1.2
+  phase: Running
+  podIP: 192.168.1.2
+  podIPs:
+  - ip: 192.168.1.2
+  qosClass: Burstable
+  startTime: "2024-02-06T12:09:46Z"
