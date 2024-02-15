@@ -1,0 +1,244 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: aff267ffd87dfd7e1eadf9d293b778639b96b97b06822cfe7b8b9162126b1b69
+    cni.projectcalico.org/podIP: 192.168.0.1/32
+    cni.projectcalico.org/podIPs: 192.168.0.1/32
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "192.168.0.1"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    k8s.v1.cni.cncf.io/networks-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "192.168.0.1"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    kubectl.kubernetes.io/default-container: manager
+  creationTimestamp: "2024-01-06T22:29:25Z"
+  generateName: cerebrum-controller-manager-5dc69c6c95-
+  labels:
+    control-plane: controller-manager
+    pod-template-hash: 5dc69c6c95
+  name: cerebrum-controller-manager-5dc69c6c95-76mbd
+  namespace: cerebrum-system
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: cerebrum-controller-manager-5dc69c6c95
+    uid: 43b45490-4cd7-4280-955a-2fd122d30687
+  uid: 75e4857c-6197-40d3-a418-b10e3274f7f6
+spec:
+  containers:
+  - args:
+    - --health-probe-bind-address=:8081
+    - --metrics-bind-address=127.0.0.1:8080
+    - --leader-elect
+    command:
+    - /manager
+    env:
+    - name: LOG_CONFIG_FILE
+      value: /etc/config/cm/config.yaml
+    - name: METALLB_KUBECONFIG_FILE
+      value: /etc/metallb/kubeconfig
+    - name: XDG_CACHE_HOME
+      value: /tmp
+    image: 10.108.29.148:5000/atom-docker/cn2/bazel-build/dev/x86_64/cerebrum-controller:smane_1116_csrx
+    imagePullPolicy: Always
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /healthz
+        port: 8081
+        scheme: HTTP
+      initialDelaySeconds: 15
+      periodSeconds: 20
+      successThreshold: 1
+      timeoutSeconds: 1
+    name: manager
+    ports:
+    - containerPort: 9443
+      name: webhook-server
+      protocol: TCP
+    readinessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /readyz
+        port: 8081
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    resources:
+      limits:
+        cpu: 500m
+        memory: 128Mi
+      requests:
+        cpu: 10m
+        memory: 64Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /tmp/k8s-webhook-server/serving-certs
+      name: cert
+      readOnly: true
+    - mountPath: /etc/config/cm
+      name: config
+    - mountPath: /etc/metallb
+      name: metallb-cluster-kubeconfig
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-2h774
+      readOnly: true
+  - args:
+    - --secure-listen-address=0.0.0.0:8443
+    - --upstream=http://127.0.0.1:8080/
+    - --logtostderr=true
+    - --v=0
+    image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.1
+    imagePullPolicy: IfNotPresent
+    name: kube-rbac-proxy
+    ports:
+    - containerPort: 8443
+      name: https
+      protocol: TCP
+    resources:
+      limits:
+        cpu: 500m
+        memory: 128Mi
+      requests:
+        cpu: 5m
+        memory: 64Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-2h774
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: smane-csrx-new
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 2000
+    runAsGroup: 3000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccount: cerebrum-controller-manager
+  serviceAccountName: cerebrum-controller-manager
+  terminationGracePeriodSeconds: 10
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: cert
+    secret:
+      defaultMode: 420
+      secretName: webhook-server-cert
+  - configMap:
+      defaultMode: 420
+      items:
+      - key: config.yaml
+        path: config.yaml
+      name: cerebrum-controller-manager-cm
+    name: config
+  - name: metallb-cluster-kubeconfig
+    secret:
+      defaultMode: 420
+      secretName: cerebrum-metallb-cluster-kubeconfig
+  - name: kube-api-access-2h774
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-06T22:29:25Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-06T22:29:36Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-06T22:29:36Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-06T22:29:25Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://2f6c8107a1ab3c32bdef0314195f9e2d1bfa6df3f3ebbfe8200bd018480e49e9
+    image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.1
+    imageID: gcr.io/kubebuilder/kube-rbac-proxy@sha256:928e64203edad8f1bba23593c7be04f0f8410c6e4feb98d9e9c2d00a8ff59048
+    lastState: {}
+    name: kube-rbac-proxy
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2024-01-06T22:29:27Z"
+  - containerID: cri-o://bceaafff15820f730924c98e7a9b2bd9ae476b06faef37b9cbe47cf10480423f
+    image: 10.108.29.148:5000/atom-docker/cn2/bazel-build/dev/x86_64/cerebrum-controller:smane_1116_csrx
+    imageID: 10.108.29.148:5000/atom-docker/cn2/bazel-build/dev/x86_64/cerebrum-controller@sha256:3974a6cfdc93f48ccd12e4990766dc9e1c0b852afc8229e1ee58c54ae5375e52
+    lastState: {}
+    name: manager
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2024-01-06T22:29:27Z"
+  hostIP: 10.87.76.26
+  phase: Running
+  podIP: 192.168.0.1
+  podIPs:
+  - ip: 192.168.0.1
+  qosClass: Burstable
+  startTime: "2024-01-06T22:29:25Z"

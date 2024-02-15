@@ -1,0 +1,170 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 2fa74c8b258414c0a940f8f8223e76af6d41c38283b16cda26b96df8d9a08b6b
+    cni.projectcalico.org/podIP: 192.168.0.9/32
+    cni.projectcalico.org/podIPs: 192.168.0.9/32
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "192.168.0.9"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    k8s.v1.cni.cncf.io/networks-status: |-
+      [{
+          "name": "k8s-pod-network",
+          "ips": [
+              "192.168.0.9"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9402"
+    prometheus.io/scrape: "true"
+  creationTimestamp: "2024-01-06T00:34:07Z"
+  generateName: cert-manager-7476c8fcf4-
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v1.12.0
+    pod-template-hash: 7476c8fcf4
+  name: cert-manager-7476c8fcf4-c99b9
+  namespace: cert-manager
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: cert-manager-7476c8fcf4
+    uid: 0b504466-b833-425f-b833-c7e67e4216c4
+  uid: 35b3727e-a5a2-4e31-b180-cf2957587875
+spec:
+  containers:
+  - args:
+    - --v=2
+    - --cluster-resource-namespace=$(POD_NAMESPACE)
+    - --leader-election-namespace=kube-system
+    - --acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v1.12.0
+    - --max-concurrent-challenges=60
+    env:
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
+    image: quay.io/jetstack/cert-manager-controller:v1.12.0
+    imagePullPolicy: IfNotPresent
+    name: cert-manager-controller
+    ports:
+    - containerPort: 9402
+      name: http-metrics
+      protocol: TCP
+    - containerPort: 9403
+      name: http-healthz
+      protocol: TCP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-gl8r5
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: smane-csrx-new
+  nodeSelector:
+    kubernetes.io/os: linux
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  serviceAccount: cert-manager
+  serviceAccountName: cert-manager
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-gl8r5
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-06T00:34:07Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-06T00:34:21Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-06T00:34:21Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-01-06T00:34:07Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://c3e9bc8ddb97ff0bbdc4c245429ac1d23be601c0f8be8d0b61957455951a2a4b
+    image: quay.io/jetstack/cert-manager-controller:v1.12.0
+    imageID: quay.io/jetstack/cert-manager-controller@sha256:368b7c507fa17c03963cf7892f68180ae8e82ca022163f86c330637adb9ac7fd
+    lastState:
+      terminated:
+        containerID: cri-o://013ddb1eb1a1539256b4a6a3467572b845bb2b95752927ed730e97dde9f19739
+        exitCode: 2
+        finishedAt: "2024-01-06T00:34:19Z"
+        reason: Error
+        startedAt: "2024-01-06T00:34:19Z"
+    name: cert-manager-controller
+    ready: true
+    restartCount: 1
+    started: true
+    state:
+      running:
+        startedAt: "2024-01-06T00:34:20Z"
+  hostIP: 10.87.76.26
+  phase: Running
+  podIP: 192.168.0.9
+  podIPs:
+  - ip: 192.168.0.9
+  qosClass: BestEffort
+  startTime: "2024-01-06T00:34:07Z"
