@@ -158,16 +158,12 @@ status:
     status: "True"
     type: Initialized
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-16T22:23:29Z"
-    message: 'containers with unready status: [kube-apiserver]'
-    reason: ContainersNotReady
-    status: "False"
+    lastTransitionTime: "2024-02-16T22:23:30Z"
+    status: "True"
     type: Ready
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-16T22:23:29Z"
-    message: 'containers with unready status: [kube-apiserver]'
-    reason: ContainersNotReady
-    status: "False"
+    lastTransitionTime: "2024-02-16T22:23:30Z"
+    status: "True"
     type: ContainersReady
   - lastProbeTime: null
     lastTransitionTime: "2024-02-06T12:09:46Z"
@@ -179,7 +175,7 @@ status:
     imageID: cdcab12b2dd16cce4efc5dd43c082469364f19ad978e922d110b74a42eff7cce
     lastState: {}
     name: kube-apiserver
-    ready: false
+    ready: true
     restartCount: 1
     started: true
     state:
