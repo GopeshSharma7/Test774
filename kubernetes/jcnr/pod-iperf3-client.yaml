@@ -2,9 +2,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   annotations:
-    cni.projectcalico.org/containerID: c62f84cb2ed92bee7fecc62aef50edb084e1aa2d7163620cc1544cd2a74f365c
-    cni.projectcalico.org/podIP: 192.168.0.20/32
-    cni.projectcalico.org/podIPs: 192.168.0.20/32
+    cni.projectcalico.org/containerID: be72147d2021f0a6fa866b13162284d53c294581cea9a2b7fe2ba619935b3f7c
+    cni.projectcalico.org/podIP: 192.168.0.34/32
+    cni.projectcalico.org/podIPs: 192.168.0.34/32
     k8s.v1.cni.cncf.io/network-status: |-
       [{
           "name": "k8s-pod-network",
