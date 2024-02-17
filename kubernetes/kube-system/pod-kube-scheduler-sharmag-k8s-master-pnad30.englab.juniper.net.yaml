@@ -90,11 +90,11 @@ status:
     status: "True"
     type: Initialized
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-17T17:46:23Z"
+    lastTransitionTime: "2024-02-17T20:54:33Z"
     status: "True"
     type: Ready
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-17T17:46:23Z"
+    lastTransitionTime: "2024-02-17T20:54:33Z"
     status: "True"
     type: ContainersReady
   - lastProbeTime: null
@@ -102,23 +102,23 @@ status:
     status: "True"
     type: PodScheduled
   containerStatuses:
-  - containerID: cri-o://abb77325802e87d82f12eaf2dbe5fafb7cf53d5b4e435afbcf3c662daaf189b3
+  - containerID: cri-o://1b984ca12a5391d9efb83cf38a0bcad20769b51ab2793aa387fbc5421f728308
     image: registry.englab.juniper.net/jfrog-repo/hosted_docker_images/kube-scheduler:v1.28.2
     imageID: 7a5d9d67a13f6ae031989bc2969ec55b06437725f397e6eb75b1dccac465a7b8
     lastState:
       terminated:
-        containerID: cri-o://a6864395557ca24c952dc257e4d1531f85a7b3190d83bfef695a48839a5599c9
+        containerID: cri-o://abb77325802e87d82f12eaf2dbe5fafb7cf53d5b4e435afbcf3c662daaf189b3
         exitCode: 1
-        finishedAt: "2024-02-17T17:46:05Z"
+        finishedAt: "2024-02-17T20:54:19Z"
         reason: Error
-        startedAt: "2024-02-17T00:06:43Z"
+        startedAt: "2024-02-17T17:46:06Z"
     name: kube-scheduler
     ready: true
-    restartCount: 13
+    restartCount: 14
     started: true
     state:
       running:
-        startedAt: "2024-02-17T17:46:06Z"
+        startedAt: "2024-02-17T20:54:20Z"
   hostIP: 192.168.1.2
   phase: Running
   podIP: 192.168.1.2

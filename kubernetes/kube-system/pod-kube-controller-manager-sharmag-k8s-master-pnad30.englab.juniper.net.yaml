@@ -150,11 +150,11 @@ status:
     status: "True"
     type: Initialized
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-17T00:07:02Z"
+    lastTransitionTime: "2024-02-17T20:54:32Z"
     status: "True"
     type: Ready
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-17T00:07:02Z"
+    lastTransitionTime: "2024-02-17T20:54:32Z"
     status: "True"
     type: ContainersReady
   - lastProbeTime: null
@@ -162,23 +162,23 @@ status:
     status: "True"
     type: PodScheduled
   containerStatuses:
-  - containerID: cri-o://4d80a3732ad23692be933f6e4da092fe798409eb63c29cb91fb1803a4ea725f0
+  - containerID: cri-o://65507d83e515271f18c560abc2be88763a2bbf309fd2f7526f7a67f47a97fa5c
     image: registry.englab.juniper.net/jfrog-repo/hosted_docker_images/kube-controller-manager:v1.28.2
     imageID: 55f13c92defb1eb854040a76e366da866bdcb1cc31fd97b2cde94433c8bf3f57
     lastState:
       terminated:
-        containerID: cri-o://c5febf369e97bbdba1adadedc47ff2f71b3e32990bb6226880888373bf3e396d
+        containerID: cri-o://4d80a3732ad23692be933f6e4da092fe798409eb63c29cb91fb1803a4ea725f0
         exitCode: 1
-        finishedAt: "2024-02-17T00:06:41Z"
+        finishedAt: "2024-02-17T20:54:19Z"
         reason: Error
-        startedAt: "2024-02-16T18:49:00Z"
+        startedAt: "2024-02-17T00:06:43Z"
     name: kube-controller-manager
     ready: true
-    restartCount: 10
+    restartCount: 11
     started: true
     state:
       running:
-        startedAt: "2024-02-17T00:06:43Z"
+        startedAt: "2024-02-17T20:54:20Z"
   hostIP: 192.168.1.2
   phase: Running
   podIP: 192.168.1.2
