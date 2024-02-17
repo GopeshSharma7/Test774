@@ -4,7 +4,7 @@ metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
       {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"webhook","app.kubernetes.io/component":"webhook","app.kubernetes.io/instance":"cert-manager","app.kubernetes.io/name":"webhook","app.kubernetes.io/version":"v1.12.0"},"name":"cert-manager-webhook","namespace":"cert-manager"},"spec":{"ports":[{"name":"https","port":443,"protocol":"TCP","targetPort":"https"}],"selector":{"app.kubernetes.io/component":"webhook","app.kubernetes.io/instance":"cert-manager","app.kubernetes.io/name":"webhook"},"type":"ClusterIP"}}
-  creationTimestamp: "2024-01-06T00:34:07Z"
+  creationTimestamp: "2024-02-01T16:11:33Z"
   labels:
     app: webhook
     app.kubernetes.io/component: webhook
@@ -13,11 +13,11 @@ metadata:
     app.kubernetes.io/version: v1.12.0
   name: cert-manager-webhook
   namespace: cert-manager
-  uid: c49d6953-026d-480e-bfee-8095f24e99a6
+  uid: 5f85493b-29ae-4f2f-8b27-05231216508d
 spec:
-  clusterIP: 10.106.214.41
+  clusterIP: 10.104.15.86
   clusterIPs:
-  - 10.106.214.41
+  - 10.104.15.86
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
