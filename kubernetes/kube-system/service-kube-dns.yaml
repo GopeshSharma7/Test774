@@ -13,9 +13,9 @@ metadata:
   namespace: kube-system
   uid: 46d41049-daad-4587-ab6d-a97d5c5a3502
 spec:
-  clusterIP: 10.96.0.10
+  clusterIP: 10.10.10.10
   clusterIPs:
-  - 10.96.0.10
+  - 10.10.10.10
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
