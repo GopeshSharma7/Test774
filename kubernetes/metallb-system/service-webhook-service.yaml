@@ -4,14 +4,14 @@ metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
       {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"webhook-service","namespace":"metallb-system"},"spec":{"ports":[{"port":443,"targetPort":9443}],"selector":{"component":"controller"}}}
-  creationTimestamp: "2024-02-01T16:12:13Z"
+  creationTimestamp: "2024-01-06T00:49:57Z"
   name: webhook-service
   namespace: metallb-system
-  uid: f6ef08fa-f931-4bc5-9cab-5878f66bc713
+  uid: a547cc52-fcc3-4a90-b672-dca448f6849e
 spec:
-  clusterIP: 10.104.231.3
+  clusterIP: 10.100.200.254
   clusterIPs:
-  - 10.104.231.3
+  - 10.100.200.254
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
