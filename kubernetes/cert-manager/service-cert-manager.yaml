@@ -4,7 +4,7 @@ metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
       {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"cert-manager","app.kubernetes.io/component":"controller","app.kubernetes.io/instance":"cert-manager","app.kubernetes.io/name":"cert-manager","app.kubernetes.io/version":"v1.12.0"},"name":"cert-manager","namespace":"cert-manager"},"spec":{"ports":[{"name":"tcp-prometheus-servicemonitor","port":9402,"protocol":"TCP","targetPort":9402}],"selector":{"app.kubernetes.io/component":"controller","app.kubernetes.io/instance":"cert-manager","app.kubernetes.io/name":"cert-manager"},"type":"ClusterIP"}}
-  creationTimestamp: "2024-01-06T00:34:07Z"
+  creationTimestamp: "2024-02-01T16:11:33Z"
   labels:
     app: cert-manager
     app.kubernetes.io/component: controller
@@ -13,11 +13,11 @@ metadata:
     app.kubernetes.io/version: v1.12.0
   name: cert-manager
   namespace: cert-manager
-  uid: 08ed90e4-934b-4e3b-a18f-6a694bf5b7ca
+  uid: 7ab26b34-a166-41b6-9c37-49e1409242fd
 spec:
-  clusterIP: 10.98.40.98
+  clusterIP: 10.99.212.14
   clusterIPs:
-  - 10.98.40.98
+  - 10.99.212.14
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
