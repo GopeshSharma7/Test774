@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: "2024-02-12T12:42:41Z"
+  creationTimestamp: "2024-01-14T02:49:22Z"
   generateName: testing-crpd1-0-
   labels:
     app: crpd1-0
     cerebrum.juniper.net/instanceSelector: crpd1-0
     cerebrum.juniper.net/instanceType: Crpd
-    controller-revision-hash: testing-crpd1-0-dc657d448
+    controller-revision-hash: testing-crpd1-0-8d8f5d7bd
     crpd.cerebrum.juniper.net/crpd: crpd1-0
     crpd.cerebrum.juniper.net/crpdNamespace: testing
     name: crpd1-0
@@ -20,8 +20,8 @@ metadata:
     controller: true
     kind: StatefulSet
     name: testing-crpd1-0
-    uid: 767aeca5-3dc9-4536-b39f-5dd1a08239fe
-  uid: ae266fec-4412-439a-8223-fd45766097b6
+    uid: d003def0-5e22-4dfe-b14f-5fecfe685058
+  uid: 4ff27736-41cb-4841-b100-e19725e808d9
 spec:
   affinity:
     podAntiAffinity:
@@ -54,7 +54,7 @@ spec:
     - mountPath: /var/run
       name: var-run-crpd
     - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: kube-api-access-m8qsb
+      name: kube-api-access-8wqzw
       readOnly: true
   dnsPolicy: ClusterFirst
   enableServiceLinks: true
@@ -99,7 +99,7 @@ spec:
     - mountPath: /var/run/vrouter
       name: var-run-vrouter
     - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: kube-api-access-m8qsb
+      name: kube-api-access-8wqzw
       readOnly: true
   - env:
     - name: NODE_IP
@@ -135,7 +135,7 @@ spec:
       value: /var/log/jcnr/
     - name: CNI_LOG_LEVEL
       value: info
-    image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/jcnr-cni:23.4-20231220-fc75ea6
+    image: hub.jnprlabs.net/cerebrum/junos-docker-local/warthog/amd64/jcnr-cni:23.4-20231208-1ef2250
     imagePullPolicy: IfNotPresent
     name: install-cni
     resources: {}
@@ -162,9 +162,9 @@ spec:
     - mountPath: /etc/jcnr
       name: jcnr-config-generated
     - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: kube-api-access-m8qsb
+      name: kube-api-access-8wqzw
       readOnly: true
-  nodeName: abhi-master-node
+  nodeName: smane-csrx-new
   preemptionPolicy: PreemptLowerPriority
   priority: 0
   restartPolicy: Always
@@ -214,7 +214,7 @@ spec:
       defaultMode: 420
       name: jcnr-config-generated
     name: jcnr-config-generated
-  - name: kube-api-access-m8qsb
+  - name: kube-api-access-8wqzw
     projected:
       defaultMode: 420
       sources:
@@ -235,66 +235,66 @@ spec:
 status:
   conditions:
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-15T09:42:24Z"
+    lastTransitionTime: "2024-01-14T02:54:03Z"
     status: "True"
     type: Initialized
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-15T09:42:25Z"
+    lastTransitionTime: "2024-01-14T02:54:04Z"
     status: "True"
     type: Ready
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-15T09:42:25Z"
+    lastTransitionTime: "2024-01-14T02:54:04Z"
     status: "True"
     type: ContainersReady
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-12T12:42:41Z"
+    lastTransitionTime: "2024-01-14T02:54:00Z"
     status: "True"
     type: PodScheduled
   containerStatuses:
-  - containerID: cri-o://eb3219e5f6f1c150ccc1fc834177fe586f27009449b288d6a020b1e527b01e86
+  - containerID: cri-o://d150debcadb33cbcc8760c9e0c5e85782de3522b4a0cb3e9497ebef71603f152
     image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/crpd:23.4R1.9
     imageID: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/crpd@sha256:6a29849e1b1a8a7e7d5c8125b13afb388aac1e051191874453ecdc5cadb0a661
     lastState: {}
     name: crpd
     ready: true
-    restartCount: 1
+    restartCount: 0
     started: true
     state:
       running:
-        startedAt: "2024-02-15T09:42:24Z"
-  hostIP: 10.87.76.24
+        startedAt: "2024-01-14T02:54:03Z"
+  hostIP: 10.87.76.26
   initContainerStatuses:
-  - containerID: cri-o://ff5fa35c57a5d3e85638c06b8c77083e5b03b860ea9a821c1775d57063b05dd1
+  - containerID: cri-o://af19d66f8324d53a156a4542b2df5af8a7bc2c65fc658733aef9822f8e1c717c
     image: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/cerebrum-crpd-init:61678478c2
     imageID: svl-artifactory.juniper.net/atom-docker/cn2/bazel-build/cerebrum-crpd-init@sha256:6b58a8e8564326cbcf05d578a085fb4bae24f2480bbde1e33ef3f6b18f938aff
     lastState: {}
     name: init
     ready: true
-    restartCount: 2
+    restartCount: 0
     state:
       terminated:
-        containerID: cri-o://ff5fa35c57a5d3e85638c06b8c77083e5b03b860ea9a821c1775d57063b05dd1
+        containerID: cri-o://af19d66f8324d53a156a4542b2df5af8a7bc2c65fc658733aef9822f8e1c717c
         exitCode: 0
-        finishedAt: "2024-02-15T09:42:21Z"
+        finishedAt: "2024-01-14T02:54:01Z"
         reason: Completed
-        startedAt: "2024-02-15T09:42:21Z"
-  - containerID: cri-o://4c70ec24ab7111dd4a49cf2afcfcc95fbfab666dd9ef9be4e32639728f8a9d0c
-    image: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/jcnr-cni:23.4-20231220-fc75ea6
-    imageID: svl-artifactory.juniper.net/junos-docker-local/warthog/amd64/jcnr-cni@sha256:f390dd52e07c0472feaba580613783ca0c9058f917d4b5ed9dde040b883275b1
+        startedAt: "2024-01-14T02:54:01Z"
+  - containerID: cri-o://764c9ed94090103c6e2c40a743215c3b3dc8c2072050d3e82d14c2e3361fd39e
+    image: hub.jnprlabs.net/cerebrum/junos-docker-local/warthog/amd64/jcnr-cni:23.4-20231208-1ef2250
+    imageID: hub.jnprlabs.net/cerebrum/junos-docker-local/warthog/amd64/jcnr-cni@sha256:313254c09611d305ffe2c13463b090eb9d69d9575db4c9c90905acca61196e2d
     lastState: {}
     name: install-cni
     ready: true
-    restartCount: 1
+    restartCount: 0
     state:
       terminated:
-        containerID: cri-o://4c70ec24ab7111dd4a49cf2afcfcc95fbfab666dd9ef9be4e32639728f8a9d0c
+        containerID: cri-o://764c9ed94090103c6e2c40a743215c3b3dc8c2072050d3e82d14c2e3361fd39e
         exitCode: 0
-        finishedAt: "2024-02-15T09:42:23Z"
+        finishedAt: "2024-01-14T02:54:03Z"
         reason: Completed
-        startedAt: "2024-02-15T09:42:22Z"
+        startedAt: "2024-01-14T02:54:02Z"
   phase: Running
-  podIP: 10.87.76.24
+  podIP: 10.87.76.26
   podIPs:
-  - ip: 10.87.76.24
+  - ip: 10.87.76.26
   qosClass: BestEffort
-  startTime: "2024-02-12T12:42:41Z"
+  startTime: "2024-01-14T02:54:00Z"
