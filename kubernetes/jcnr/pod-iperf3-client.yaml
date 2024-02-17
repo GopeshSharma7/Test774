@@ -2,14 +2,14 @@ apiVersion: v1
 kind: Pod
 metadata:
   annotations:
-    cni.projectcalico.org/containerID: cde3c15daf922de2ea30c3f1b652f09ce49bf68415e665ec08f692790805a256
-    cni.projectcalico.org/podIP: 192.168.0.57/32
-    cni.projectcalico.org/podIPs: 192.168.0.57/32
+    cni.projectcalico.org/containerID: 329d09b985d64a09baa52909b5049af7589cb65ca2dcf40df40a002596481d83
+    cni.projectcalico.org/podIP: 192.168.0.62/32
+    cni.projectcalico.org/podIPs: 192.168.0.62/32
     k8s.v1.cni.cncf.io/network-status: |-
       [{
           "name": "k8s-pod-network",
           "ips": [
-              "192.168.0.22"
+              "192.168.0.62"
           ],
           "default": true,
           "dns": {}
@@ -51,7 +51,7 @@ metadata:
       [{
           "name": "k8s-pod-network",
           "ips": [
-              "192.168.0.22"
+              "192.168.0.62"
           ],
           "default": true,
           "dns": {}
@@ -165,40 +165,33 @@ status:
     status: "True"
     type: Initialized
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-15T09:41:47Z"
-    message: 'containers with unready status: [hugepages]'
-    reason: ContainersNotReady
-    status: "False"
+    lastTransitionTime: "2024-02-17T00:13:47Z"
+    status: "True"
     type: Ready
   - lastProbeTime: null
-    lastTransitionTime: "2024-02-15T09:41:47Z"
-    message: 'containers with unready status: [hugepages]'
-    reason: ContainersNotReady
-    status: "False"
+    lastTransitionTime: "2024-02-17T00:13:47Z"
+    status: "True"
     type: ContainersReady
   - lastProbeTime: null
     lastTransitionTime: "2024-02-12T12:50:46Z"
     status: "True"
     type: PodScheduled
   containerStatuses:
-  - image: quay.io/wcaban/net-toolbox:latest
-    imageID: ""
-    lastState:
-      terminated:
-        exitCode: 137
-        finishedAt: null
-        message: The container could not be located when the pod was deleted.  The
-          container used to be Running
-        reason: ContainerStatusUnknown
-        startedAt: null
+  - containerID: cri-o://69123e1f0b161a0d382610c61732a17d23e3f5c191de12cbf18d077f93ab9ea5
+    image: quay.io/wcaban/net-toolbox:latest
+    imageID: quay.io/wcaban/net-toolbox@sha256:69de1d5f1259714f9d6369be9d2f3b7988ebc8674280a4cf3c68ce881eb70eb8
+    lastState: {}
     name: hugepages
-    ready: false
+    ready: true
     restartCount: 1
-    started: false
+    started: true
     state:
-      waiting:
-        reason: ContainerCreating
+      running:
+        startedAt: "2024-02-17T00:13:46Z"
   hostIP: 10.87.76.24
   phase: Running
+  podIP: 192.168.0.62
+  podIPs:
+  - ip: 192.168.0.62
   qosClass: Burstable
   startTime: "2024-02-12T12:50:46Z"
