@@ -3,22 +3,22 @@ kind: Service
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"gitea-service","namespace":"default"},"spec":{"ports":[{"nodePort":30033,"port":3000,"protocol":"TCP","targetPort":3000}],"selector":{"app":"gitea"},"type":"NodePort"}}
-  creationTimestamp: "2024-02-14T09:04:38Z"
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"gitea-service","namespace":"default"},"spec":{"ports":[{"nodePort":30030,"port":3000,"protocol":"TCP","targetPort":3000}],"selector":{"app":"gitea"},"type":"NodePort"}}
+  creationTimestamp: "2024-02-06T10:25:17Z"
   name: gitea-service
   namespace: default
-  uid: af8840cf-49b3-4656-89bd-61ea6dd79434
+  uid: 99b61c31-fd7a-4e69-92d2-4d245048612c
 spec:
-  clusterIP: 10.105.153.41
+  clusterIP: 10.10.10.103
   clusterIPs:
-  - 10.105.153.41
+  - 10.10.10.103
   externalTrafficPolicy: Cluster
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - nodePort: 30033
+  - nodePort: 30030
     port: 3000
     protocol: TCP
     targetPort: 3000
