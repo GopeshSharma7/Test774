@@ -9,9 +9,9 @@ metadata:
   namespace: default
   uid: 627d7e5e-191c-4d94-9791-01fdf7b428d2
 spec:
-  clusterIP: 10.96.0.1
+  clusterIP: 10.10.10.1
   clusterIPs:
-  - 10.96.0.1
+  - 10.10.10.1
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
